@@ -27,6 +27,7 @@ public class Pathfinding : MonoBehaviour
 
         List<Node> openSet = new List<Node>();
         HashSet<Node> closedSet = new HashSet<Node>();
+        HashSet<Node> searchedSet = new HashSet<Node>();
         
         openSet.Add(startNode);
 
@@ -48,6 +49,7 @@ public class Pathfinding : MonoBehaviour
             if (currentNode == targetNode)
             {
                 RetracePath(startNode, targetNode);
+                grid.searchedSet = searchedSet;
                 return;
             }
 
@@ -70,6 +72,13 @@ public class Pathfinding : MonoBehaviour
                         openSet.Add(neighbour);
                     }
                 }
+                else
+                {
+                    if (!searchedSet.Contains(neighbour))
+                    {
+                        searchedSet.Add(neighbour);
+                    }
+                }
             }
         }
     }
@@ -84,6 +93,7 @@ public class Pathfinding : MonoBehaviour
             path.Add(currentNode);
             currentNode = currentNode.parent;
         }
+        path.Add(startNode);
         path.Reverse();
 
         grid.path = path;

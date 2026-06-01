@@ -77,6 +77,7 @@ public class Grid : MonoBehaviour
     }
 
     public List<Node> path;
+    public HashSet<Node> searchedSet;
     private void OnDrawGizmos()
     {
         Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, 1, gridWorldSize.y));
@@ -86,6 +87,13 @@ public class Grid : MonoBehaviour
             foreach(Node n in grid)
             {
                 Gizmos.color = (n.walkable) ? Color.white : Color.red;
+                if (searchedSet != null)
+                {
+                    if (searchedSet.Contains(n))
+                    {
+                        Gizmos.color = Color.orange;
+                    }
+                }
                 if (path != null)
                 {
                     if (path.Contains(n))
