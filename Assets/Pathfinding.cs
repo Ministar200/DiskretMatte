@@ -9,6 +9,7 @@ public class Pathfinding : MonoBehaviour
     public Transform seeker, target;
     
     private Grid grid;
+    private bool oneTimeInstantiate = true;
 
     private void Awake()
     {
@@ -96,7 +97,9 @@ public class Pathfinding : MonoBehaviour
         path.Add(startNode);
         path.Reverse();
 
+        grid.instantiationBool = oneTimeInstantiate;
         grid.path = path;
+        oneTimeInstantiate = false;
     }
     
     int GetDistance(Node nodeA, Node nodeB)

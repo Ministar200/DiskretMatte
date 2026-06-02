@@ -1094,11 +1094,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a03851f5a1ceb14db69344e3fc869cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Grid
+  gridWorldSize: {x: 30, y: 30}
+  nodeRadius: 0.5
+  generatePhysicalGrid: 1
   unwalkableMask:
     serializedVersion: 2
     m_Bits: 64
-  gridWorldSize: {x: 30, y: 30}
-  nodeRadius: 0.5
+  nonSearchedCube: {fileID: 3835004010744975487, guid: 09d4c0e23ba7bca40a59dd33ff61c7cd, type: 3}
+  searchedCube: {fileID: 3835004010744975487, guid: ad870fb7770fd9d4d95bc5437cabf09f, type: 3}
+  pathCube: {fileID: 3835004010744975487, guid: 0b33f0a090f4da540ac1c8929f8ed6a1, type: 3}
+  cubeParent: {fileID: 1520163693}
 --- !u!4 &968507093
 Transform:
   m_ObjectHideFlags: 0
@@ -1801,6 +1806,37 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1459379781}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1520163693
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1520163694}
+  m_Layer: 0
+  m_Name: CubeParent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1520163694
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1520163693}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1524025830
 GameObject:
   m_ObjectHideFlags: 0
@@ -2784,3 +2820,4 @@ SceneRoots:
   - {fileID: 103060217}
   - {fileID: 925085102}
   - {fileID: 1543222271}
+  - {fileID: 1520163694}

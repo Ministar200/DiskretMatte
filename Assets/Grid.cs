@@ -1,17 +1,34 @@
 using System;
 using System.Collections.Generic;
+using NUnit.Framework.Internal;
+using Unity.Hierarchy;
 using UnityEngine;
 
 public class Grid : MonoBehaviour
 {
-    public LayerMask unwalkableMask;
+    //ADD THE TEXT FOR THE G-COST AND H-COST AND F-COST
+    
+    [Header("Values you can change")]
     public Vector2 gridWorldSize;
     public float nodeRadius;
-    private Node[,] grid;
+    [SerializeField] private bool generatePhysicalGrid;
+    
+    [Header("DO NOT CHANGE THESE VALUES")]
+    public LayerMask unwalkableMask;
+    [SerializeField] public GameObject nonSearchedCube;
+    [SerializeField] private GameObject searchedCube;
+    [SerializeField] private GameObject pathCube;
+    [SerializeField] private GameObject cubeParent;
 
+    private Node[,] grid;
+    public List<Node> path;
+    public HashSet<Node> searchedSet;
+    
     private float nodeDiameter;
     private int gridSizeX;
     private int gridSizeY;
+    [NonSerialized] public bool instantiationBool;
+    private bool shouldInstantiate => instantiationBool;
     
     private void Start()
     {
@@ -20,6 +37,11 @@ public class Grid : MonoBehaviour
         gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
 
         CreateGrid();
+    }
+
+    private void Update()
+    {
+        InstantiateGrid();
     }
 
     void CreateGrid()
@@ -71,13 +93,48 @@ public class Grid : MonoBehaviour
         percentX = Mathf.Clamp01(percentX);
         percentY = Mathf.Clamp01(percentY);
 
-        int x = Mathf.RoundToInt((gridSizeX-1) * percentX);
+        int x = Mathf.RoundToInt((gridSizeX - 1) * percentX);
         int y = Mathf.RoundToInt((gridSizeY - 1) * percentY);
         return grid[x, y];
     }
-
-    public List<Node> path;
-    public HashSet<Node> searchedSet;
+    
+    private void InstantiateGrid()
+    {
+        if (!shouldInstantiate || !generatePhysicalGrid)
+        {
+            return;
+        }
+        if (grid != null)
+        {
+            foreach (Node n in grid)
+            {
+                if (searchedSet != null)
+                {
+                    if (searchedSet.Contains(n))
+                    {
+                        Gizmos.color = Color.orange;
+                        Instantiate(searchedCube, n.worldPosition, Quaternion.identity, cubeParent.transform);
+                    }
+                }
+                if (path != null)
+                {
+                    if (path.Contains(n))
+                    {
+                        Gizmos.color = Color.black;
+                        Instantiate(pathCube, n.worldPosition, Quaternion.identity, cubeParent.transform);
+                    }
+                }
+                if (searchedSet != null && path != null)
+                {
+                    if (!searchedSet.Contains(n) && !path.Contains(n))
+                    {
+                        Instantiate(nonSearchedCube, n.worldPosition, Quaternion.identity, cubeParent.transform);
+                    }
+                }
+            }
+        }
+    }
+    
     private void OnDrawGizmos()
     {
         Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, 1, gridWorldSize.y));
