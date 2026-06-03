@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using NUnit.Framework.Internal;
 using Unity.Hierarchy;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Grid : MonoBehaviour
@@ -15,40 +16,39 @@ public class Grid : MonoBehaviour
     
     [Header("DO NOT CHANGE THESE VALUES")]
     public LayerMask unwalkableMask;
-    [SerializeField] public GameObject nonSearchedCube;
+    [SerializeField] public PhysicalNodes nonSearchedCube;
     [SerializeField] private GameObject searchedCube;
     [SerializeField] private GameObject pathCube;
     [SerializeField] private GameObject cubeParent;
 
     private Node[,] grid;
+    private PhysicalNodes[] physicalGrid;
     public List<Node> path;
     public HashSet<Node> searchedSet;
     
     private float nodeDiameter;
     private int gridSizeX;
     private int gridSizeY;
-    [NonSerialized] public bool instantiationBool;
-    private bool shouldInstantiate => instantiationBool;
     
     private void Start()
     {
         nodeDiameter = nodeRadius * 2;
+        nonSearchedCube.gameObject.transform.localScale = new Vector3(nodeDiameter,nodeDiameter,nodeDiameter);
         gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
         gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
 
         CreateGrid();
     }
-
-    private void Update()
-    {
-        InstantiateGrid();
-    }
+    
+    
 
     void CreateGrid()
     {
         grid = new Node[gridSizeX, gridSizeY];
+        physicalGrid = new PhysicalNodes[grid.Length];
         Vector3 worldBottomLeft =
             transform.position - Vector3.right * gridWorldSize.x / 2 - Vector3.forward * gridWorldSize.y / 2;
+        int num = 0;
         
         for (int x = 0; x < gridSizeX; x++)
         {
@@ -61,6 +61,19 @@ public class Grid : MonoBehaviour
                 grid[x, y] = new Node(walkable, worldPoint, x, y);
             }
         }
+        
+        foreach (Node n in grid)
+        {
+            if (num < physicalGrid.Length - 1)
+            {
+                num += 1;
+            }
+            
+            PhysicalNodes node = Instantiate(nonSearchedCube, n.worldPosition, Quaternion.identity, cubeParent.transform); 
+            node.ChangeColor(0); 
+            physicalGrid[num] = node;
+        }
+
     }
 
     public List<Node> GetNeighbours(Node node)
@@ -98,37 +111,34 @@ public class Grid : MonoBehaviour
         return grid[x, y];
     }
     
-    private void InstantiateGrid()
+    public void ChangeColors()
     {
-        if (!shouldInstantiate || !generatePhysicalGrid)
-        {
-            return;
-        }
+        int num = 0;
+
         if (grid != null)
         {
-            foreach (Node n in grid)
+            foreach(Node n in grid)
             {
+                if (num < physicalGrid.Length - 1)
+                {
+                    num += 1;
+                }
+                physicalGrid[num].ChangeColor((n.walkable) ? PhysicalNodes.WHITENUM : PhysicalNodes.REDNUM);
+                physicalGrid[num].ChangeText(n.gCost, n.hCost, n.fCost);
                 if (searchedSet != null)
                 {
                     if (searchedSet.Contains(n))
                     {
-                        Gizmos.color = Color.orange;
-                        Instantiate(searchedCube, n.worldPosition, Quaternion.identity, cubeParent.transform);
+                        physicalGrid[num].ChangeColor(PhysicalNodes.ORANGENUM);
+                        physicalGrid[num].ChangeText(n.gCost, n.hCost, n.fCost);
                     }
                 }
                 if (path != null)
                 {
                     if (path.Contains(n))
                     {
-                        Gizmos.color = Color.black;
-                        Instantiate(pathCube, n.worldPosition, Quaternion.identity, cubeParent.transform);
-                    }
-                }
-                if (searchedSet != null && path != null)
-                {
-                    if (!searchedSet.Contains(n) && !path.Contains(n))
-                    {
-                        Instantiate(nonSearchedCube, n.worldPosition, Quaternion.identity, cubeParent.transform);
+                        physicalGrid[num].ChangeColor(PhysicalNodes.BLACKNUM);
+                        physicalGrid[num].ChangeText(n.gCost, n.hCost, n.fCost);
                     }
                 }
             }
@@ -149,6 +159,7 @@ public class Grid : MonoBehaviour
                     if (searchedSet.Contains(n))
                     {
                         Gizmos.color = Color.orange;
+                        
                     }
                 }
                 if (path != null)
@@ -158,6 +169,7 @@ public class Grid : MonoBehaviour
                         Gizmos.color = Color.black;
                     }
                 }
+                
                 Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter-.1f));
             }
         }

@@ -1,24 +1,34 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class Pathfinding : MonoBehaviour
 {
     public Transform seeker, target;
     
     private Grid grid;
-    private bool oneTimeInstantiate = true;
+    private Vector3 oldSeekerPos;
+    [SerializeField] private float timer;
+    [SerializeField] private float waitTime;
 
     private void Awake()
     {
         grid = GetComponent<Grid>();
+        oldSeekerPos.x = seeker.position.x + 1;
+        StartCoroutine(Clock());
     }
 
     private void Update()
     {
         FindPath(seeker.position, target.position);
+        if (oldSeekerPos != seeker.position && timer >= waitTime)
+        {
+            Debug.Log("AAA");
+            grid.ChangeColors();
+            oldSeekerPos = seeker.position;
+            timer = 0;
+            StartCoroutine(Clock());
+        }
     }
 
     void FindPath(Vector3 startPos, Vector3 targetPos)
@@ -94,12 +104,9 @@ public class Pathfinding : MonoBehaviour
             path.Add(currentNode);
             currentNode = currentNode.parent;
         }
-        path.Add(startNode);
         path.Reverse();
 
-        grid.instantiationBool = oneTimeInstantiate;
         grid.path = path;
-        oneTimeInstantiate = false;
     }
     
     int GetDistance(Node nodeA, Node nodeB)
@@ -112,5 +119,11 @@ public class Pathfinding : MonoBehaviour
             return 14 * dstY + 10 * (dstX - dstY);
         }
         return 14 * dstX + 10 * (dstY - dstX);
+    }
+
+    IEnumerator Clock()
+    {
+        yield return new WaitForSecondsRealtime(waitTime);
+        timer = waitTime;
     }
 }
