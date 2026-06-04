@@ -42,11 +42,8 @@ public class Pathfinding : MonoBehaviour
         List<Node> openSet = new List<Node>();
         HashSet<Node> closedSet = new HashSet<Node>();
         HashSet<Node> searchedSet = new HashSet<Node>();
-
-        if (startNode.worldPosition != seeker.position)
-        {
-            startNode.gCost = 0;
-        }
+        
+        startNode.gCost = 0;
         
         openSet.Add(startNode);
 
