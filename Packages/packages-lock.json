@@ -33,8 +33,8 @@
       "dependencies": {
         "com.unity.burst": "1.8.23",
         "com.unity.mathematics": "1.3.2",
-        "com.unity.nuget.mono-cecil": "1.11.5",
         "com.unity.test-framework": "1.4.6",
+        "com.unity.nuget.mono-cecil": "1.11.5",
         "com.unity.test-framework.performance": "3.0.3"
       },
       "url": "https://packages.unity.com"
@@ -167,9 +167,9 @@
       "depth": 0,
       "source": "registry",
       "dependencies": {
+        "com.unity.modules.audio": "1.0.0",
         "com.unity.modules.director": "1.0.0",
         "com.unity.modules.animation": "1.0.0",
-        "com.unity.modules.audio": "1.0.0",
         "com.unity.modules.particlesystem": "1.0.0"
       },
       "url": "https://packages.unity.com"
@@ -192,6 +192,13 @@
         "com.unity.modules.jsonserialize": "1.0.0"
       },
       "url": "https://packages.unity.com"
+    },
+    "se.his.vector-renderer": {
+      "version": "https://github.com/UniversityOfSkovde/Vector-Renderer.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "44e9ee8565ada5d5461c353d09211f8e5a1d73c3"
     },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",

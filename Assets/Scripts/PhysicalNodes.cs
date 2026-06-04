@@ -13,6 +13,7 @@ public class PhysicalNodes : MonoBehaviour
     public const int ORANGENUM = 1;
     public const int BLACKNUM =2;
     public const int REDNUM = 3;
+    public const int BLUENUM = 4;
 
     public void ChangeColor(int num)
     {
@@ -31,6 +32,10 @@ public class PhysicalNodes : MonoBehaviour
         else if (num == 3)
         {
             meshRenderer.material.color = Color.red;
+        }
+        else if (num == 4)
+        {
+            meshRenderer.material.color = Color.blue;
         }
     }
 

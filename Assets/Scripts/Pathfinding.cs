@@ -4,18 +4,21 @@ using UnityEngine;
 
 public class Pathfinding : MonoBehaviour
 {
-    public Transform seeker, target;
+    private Transform seeker, target;
     
     private Grid grid;
     private Vector3 oldSeekerPos;
-    [SerializeField] private float timer;
-    [SerializeField] private float waitTime;
+    private float timer; 
+    private float waitTime;
 
     private void Awake()
     {
         grid = GetComponent<Grid>();
+        seeker = grid.Seeker;
+        target = grid.Target;
+        timer = grid.Timer;
+        waitTime = grid.WaitTime;
         oldSeekerPos.x = seeker.position.x + 1;
-        StartCoroutine(Clock());
     }
 
     private void Update()
@@ -39,6 +42,11 @@ public class Pathfinding : MonoBehaviour
         List<Node> openSet = new List<Node>();
         HashSet<Node> closedSet = new HashSet<Node>();
         HashSet<Node> searchedSet = new HashSet<Node>();
+
+        if (startNode.worldPosition != seeker.position)
+        {
+            startNode.gCost = 0;
+        }
         
         openSet.Add(startNode);
 
@@ -70,7 +78,7 @@ public class Pathfinding : MonoBehaviour
                 {
                     continue;
                 }
-
+                
                 int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour);
                 if (newMovementCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
                 {
@@ -81,9 +89,10 @@ public class Pathfinding : MonoBehaviour
                     if (!openSet.Contains(neighbour))
                     {
                         openSet.Add(neighbour);
+                        
                     }
                 }
-                else
+                if (newMovementCostToNeighbour == neighbour.gCost || newMovementCostToNeighbour > neighbour.gCost)
                 {
                     if (!searchedSet.Contains(neighbour))
                     {
@@ -98,7 +107,7 @@ public class Pathfinding : MonoBehaviour
     {
         List<Node> path = new List<Node>();
         Node currentNode = endNode;
-
+        
         while (currentNode != startNode)
         {
             path.Add(currentNode);
@@ -114,6 +123,12 @@ public class Pathfinding : MonoBehaviour
         int dstX = Mathf.Abs(nodeA.gridX - nodeB.gridX);
         int dstY = Mathf.Abs(nodeA.gridY - nodeB.gridY);
 
+        if (nodeA.obstacle || nodeB.obstacle)
+        {
+            dstX *= grid.ObstaclePenalty;
+            dstY *= grid.ObstaclePenalty;
+        }
+        
         if (dstX > dstY)
         {
             return 14 * dstY + 10 * (dstX - dstY);
@@ -124,6 +139,6 @@ public class Pathfinding : MonoBehaviour
     IEnumerator Clock()
     {
         yield return new WaitForSecondsRealtime(waitTime);
-        timer = waitTime;
+        timer += waitTime;
     }
 }
