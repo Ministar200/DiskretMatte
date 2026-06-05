@@ -12,6 +12,7 @@ public class Node
     public int hCost;
     public Node parent;
 
+    //Make a constructor so that we can assign these values when creating references for our arrays within grid. 
     public Node(bool _walkable, bool _obstacle, Vector3 _worldPos, int _gridX, int _gridY)
     {
         walkable = _walkable;
@@ -21,6 +22,7 @@ public class Node
         gridY = _gridY;
     }
 
+    //Since the F-Cost is the sum of the G-Cost and H-Cost this shouldn't be settable and instead should only be gettable.
     public int fCost => gCost + hCost;
 
 }

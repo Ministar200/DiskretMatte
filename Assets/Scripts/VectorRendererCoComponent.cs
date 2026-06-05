@@ -8,16 +8,6 @@ public class VectorRendererCoComponent : MonoBehaviour
     private VectorRenderer vectors;
 
     private Grid grid;
-
-    [SerializeField]
-    public Vector3 vectorA = new Vector3(3, 0, 0);
-    
-    [SerializeField]
-    public Vector3 vectorB = new Vector3(0, 3, 0);
-    
-    [SerializeField]
-    public Vector3 vectorC = new Vector3(0, 0, 3);
-    
     void OnEnable() {
         vectors = GetComponent<VectorRenderer>();
         grid = GetComponent<Grid>();
@@ -26,6 +16,7 @@ public class VectorRendererCoComponent : MonoBehaviour
     void Update()
     {
         using (vectors.Begin()) {
+            //Draw a vector between each node starting in the startNode and ending in the endNode.
             if (grid.path != null)
             {
                 for (int i = 1; i < grid.path.Count; i++)
@@ -51,15 +42,9 @@ public class ExampleGUI : Editor {
         if (ex == null) return;
 
         EditorGUI.BeginChangeCheck();
-        var a = Handles.PositionHandle(ex.vectorA, Quaternion.identity);
-        var b = Handles.PositionHandle(ex.vectorB, Quaternion.identity);
-        var c = Handles.PositionHandle(ex.vectorC, Quaternion.identity);
 
         if (EditorGUI.EndChangeCheck()) {
             Undo.RecordObject(target, "Vector Positions");
-            ex.vectorA = a;
-            ex.vectorB = b;
-            ex.vectorC = c;
             EditorUtility.SetDirty(target);
         }
     }

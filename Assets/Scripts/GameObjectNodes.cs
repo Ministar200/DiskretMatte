@@ -1,16 +1,17 @@
-using System;
 using TMPro;
 using UnityEngine;
 
-public class PhysicalNodes : MonoBehaviour
+public class GameObjectNodes : MonoBehaviour
 {
     [SerializeField] private MeshRenderer meshRenderer;
     [SerializeField] private TextMeshProUGUI gCostText;
     [SerializeField] private TextMeshProUGUI hCostText;
     [SerializeField] private TextMeshProUGUI fCostText;
 
+    //The function which changes the colors of the Game Object Nodes.
     public void ChangeColor(ColorState state)
     {
+        //A switch case which decides the color based on the ColorState state parameter. 
         switch (state)
         {
             case ColorState.NonSearchedColorState:
@@ -35,6 +36,7 @@ public class PhysicalNodes : MonoBehaviour
         }
     }
 
+    //The function which changes the text of the text components of each node. This function takes in three int parameters and adds them to the strings.
     public void ChangeText(int gCost, int hCost, int fCost)
     {
         gCostText.text = "GCost: \n" + gCost;
@@ -43,6 +45,7 @@ public class PhysicalNodes : MonoBehaviour
     }
 }
 
+//An enum which allows us to easily decide which color we want each node to become.
 public enum ColorState
 {
     NonSearchedColorState,
