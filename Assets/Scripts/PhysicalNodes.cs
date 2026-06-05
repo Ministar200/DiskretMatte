@@ -9,33 +9,29 @@ public class PhysicalNodes : MonoBehaviour
     [SerializeField] private TextMeshProUGUI hCostText;
     [SerializeField] private TextMeshProUGUI fCostText;
 
-    public const int WHITENUM = 0;
-    public const int ORANGENUM = 1;
-    public const int BLACKNUM =2;
-    public const int REDNUM = 3;
-    public const int BLUENUM = 4;
-
-    public void ChangeColor(int num)
+    public void ChangeColor(ColorState state)
     {
-        if (num == 0)
+        switch (state)
         {
-            meshRenderer.material.color = Color.white;
-        }
-        else if (num == 1)
-        {
-            meshRenderer.material.color = Color.orange;
-        }
-        else if (num == 2)
-        {
-            meshRenderer.material.color = Color.black;
-        }
-        else if (num == 3)
-        {
-            meshRenderer.material.color = Color.red;
-        }
-        else if (num == 4)
-        {
-            meshRenderer.material.color = Color.blue;
+            case ColorState.NonSearchedColorState:
+                meshRenderer.material.color = Color.white;
+                break;
+            
+            case ColorState.SearchedColorState:
+                meshRenderer.material.color = Color.orange; 
+                break;
+            
+            case ColorState.PathColorState:
+                meshRenderer.material.color = Color.black;
+                break;
+            
+            case ColorState.BlockadeColorState:
+                meshRenderer.material.color = Color.red;
+                break;
+            
+            case ColorState.ObstacleColorState:
+                meshRenderer.material.color = Color.blue;
+                break;
         }
     }
 
@@ -45,4 +41,13 @@ public class PhysicalNodes : MonoBehaviour
         hCostText.text = "HCost: \n" + hCost;
         fCostText.text = "FCost: \n" + fCost;
     }
+}
+
+public enum ColorState
+{
+    NonSearchedColorState,
+    SearchedColorState,
+    PathColorState,
+    BlockadeColorState,
+    ObstacleColorState
 }

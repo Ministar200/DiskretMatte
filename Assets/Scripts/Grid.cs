@@ -1,18 +1,13 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using NUnit.Framework.Internal;
-using Unity.Hierarchy;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class Grid : MonoBehaviour
 {
-    //ADD THE TEXT FOR THE G-COST AND H-COST AND F-COST
-    
     [Header("Values you can change")]
+    [SerializeField]
     public Vector2 gridWorldSize;
+    [SerializeField, Tooltip("The radius of each node. This determines the size of each node.")]
     public float nodeRadius;
     [SerializeField] private bool generatePhysicalGrid;
     [SerializeField] private float timer;
@@ -53,15 +48,12 @@ public class Grid : MonoBehaviour
 
         CreateGrid();
     }
-
-    private Vector3 worldPoint;
-    private Vector3 worldBottomLeft;
     
     void CreateGrid()
     {
         grid = new Node[gridSizeX, gridSizeY];
         physicalGrid = new PhysicalNodes[grid.Length];
-        worldBottomLeft =
+        Vector3 worldBottomLeft =
             transform.position - Vector3.right * gridWorldSize.x / 2 - Vector3.forward * gridWorldSize.y / 2;
         int num = 0;
         
@@ -69,7 +61,7 @@ public class Grid : MonoBehaviour
         {
             for (int y = 0; y < gridSizeY; y++)
             {
-                worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + nodeRadius) +
+                Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + nodeRadius) +
                                      Vector3.forward * (y * nodeDiameter + nodeRadius);
                 bool walkable = !(Physics.CheckSphere(worldPoint, nodeRadius, unwalkableMask));
                 bool obstacle = Physics.CheckSphere(worldPoint, nodeRadius, obstacleMask);
@@ -77,7 +69,11 @@ public class Grid : MonoBehaviour
                 grid[x, y] = new Node(walkable, obstacle, worldPoint, x, y);
             }
         }
-        
+
+        if (!generatePhysicalGrid)
+        {
+            return;
+        }
         foreach (Node n in grid)
         {
             if (num < physicalGrid.Length - 1)
@@ -100,11 +96,13 @@ public class Grid : MonoBehaviour
     {
         if (timer >= waitTime * 10)
         {
+            Vector3 worldBottomLeft =
+                transform.position - Vector3.right * gridWorldSize.x / 2 - Vector3.forward * gridWorldSize.y / 2;
             for (int x = 0; x < gridSizeX; x++)
             {
                 for (int y = 0; y < gridSizeY; y++)
                 {
-                    worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + nodeRadius) +
+                    Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + nodeRadius) +
                                  Vector3.forward * (y * nodeDiameter + nodeRadius);
                     bool walkable = !(Physics.CheckSphere(worldPoint, nodeRadius, unwalkableMask));
                     bool obstacle = Physics.CheckSphere(worldPoint, nodeRadius, obstacleMask);
@@ -158,7 +156,7 @@ public class Grid : MonoBehaviour
     {
         int num = 0;
 
-        if (grid != null)
+        if (grid != null && generatePhysicalGrid)
         {
             foreach(Node n in grid)
             {
@@ -166,13 +164,15 @@ public class Grid : MonoBehaviour
                 {
                     num += 1;
                 }
-                physicalGrid[num].ChangeColor((n.walkable) ? PhysicalNodes.WHITENUM : PhysicalNodes.REDNUM);
+                
+                physicalGrid[num].ChangeColor((n.walkable) ? ColorState.NonSearchedColorState : ColorState.BlockadeColorState);
                 physicalGrid[num].ChangeText(n.gCost, n.hCost, n.fCost);
+                
                 if (searchedSet != null)
                 {
                     if (searchedSet.Contains(n))
                     {
-                        physicalGrid[num].ChangeColor(PhysicalNodes.ORANGENUM);
+                        physicalGrid[num].ChangeColor(ColorState.SearchedColorState);
                         physicalGrid[num].ChangeText(n.gCost, n.hCost, n.fCost);
                     }
                 }
@@ -180,13 +180,13 @@ public class Grid : MonoBehaviour
                 {
                     if (path.Contains(n))
                     {
-                        physicalGrid[num].ChangeColor(PhysicalNodes.BLACKNUM);
+                        physicalGrid[num].ChangeColor(ColorState.PathColorState);
                         physicalGrid[num].ChangeText(n.gCost, n.hCost, n.fCost);
                     }
                 }
                 if (n.obstacle && n.walkable)
                 {
-                    physicalGrid[num].ChangeColor(PhysicalNodes.BLUENUM);
+                    physicalGrid[num].ChangeColor(ColorState.ObstacleColorState);
                 }
                 if (searchedSet != null && path != null)
                 {
@@ -208,7 +208,6 @@ public class Grid : MonoBehaviour
         {
             foreach(Node n in grid)
             {
-                Gizmos.color = (n.obstacle) ?  Color.blue : Color.white;
                 Gizmos.color = (n.walkable) ? Color.white : Color.red;
                 if (searchedSet != null)
                 {
@@ -225,6 +224,10 @@ public class Grid : MonoBehaviour
                         Gizmos.color = Color.black;
                     }
                 }
+                if (n.obstacle && n.walkable)
+                { 
+                    Gizmos.color = Color.blue;
+                }
                 
                 Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter-.1f));
             }
@@ -234,6 +237,6 @@ public class Grid : MonoBehaviour
     IEnumerator Clock()
     {
         yield return new WaitForSecondsRealtime(waitTime);
-        timer = waitTime*100;
+        timer += waitTime*100;
     }
 }

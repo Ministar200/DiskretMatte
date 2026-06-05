@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Pathfinding : MonoBehaviour
@@ -26,7 +27,6 @@ public class Pathfinding : MonoBehaviour
         FindPath(seeker.position, target.position);
         if (oldSeekerPos != seeker.position && timer >= waitTime)
         {
-            Debug.Log("AAA");
             grid.ChangeColors();
             oldSeekerPos = seeker.position;
             timer = 0;
@@ -86,14 +86,13 @@ public class Pathfinding : MonoBehaviour
                     if (!openSet.Contains(neighbour))
                     {
                         openSet.Add(neighbour);
-                        
+                        searchedSet.Add(neighbour);
                     }
                 }
                 if (newMovementCostToNeighbour == neighbour.gCost || newMovementCostToNeighbour > neighbour.gCost)
                 {
                     if (!searchedSet.Contains(neighbour))
                     {
-                        searchedSet.Add(neighbour);
                     }
                 }
             }
@@ -109,6 +108,11 @@ public class Pathfinding : MonoBehaviour
         {
             path.Add(currentNode);
             currentNode = currentNode.parent;
+        }
+
+        if (startNode.walkable)
+        {
+            path.Add(startNode);
         }
         path.Reverse();
 
