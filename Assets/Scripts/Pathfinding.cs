@@ -27,7 +27,7 @@ public class Pathfinding : MonoBehaviour
     private void Update()
     {
         //Since we wouldn't want to run things unnecessarily if nothing is moving or changing we check if the seeker, our starting node, has moved and if enough time has passed.
-        if (oldSeekerPos != seeker.position && timer >= waitTime)
+        if (timer >= waitTime)
         {
             FindPath(seeker.position, target.position);
             grid.ChangeColorsAndTexts();

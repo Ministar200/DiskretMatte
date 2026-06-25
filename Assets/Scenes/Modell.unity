@@ -1370,6 +1370,23 @@ MonoBehaviour:
   nodeGameObjectParent: {fileID: 1782062339}
   seeker: {fileID: 925085102}
   target: {fileID: 1543222271}
+  blocadkes:
+  - {fileID: 2083974391}
+  - {fileID: 1524025830}
+  - {fileID: 2086116061}
+  - {fileID: 1002459580}
+  - {fileID: 523492842}
+  - {fileID: 1270771641}
+  - {fileID: 2027741246}
+  - {fileID: 754308323}
+  - {fileID: 1855699277}
+  - {fileID: 500769951}
+  - {fileID: 990061559}
+  - {fileID: 1635792414}
+  - {fileID: 1545555044}
+  - {fileID: 370776073}
+  - {fileID: 611179916}
+  - {fileID: 1056516954}
 --- !u!4 &968507093
 Transform:
   m_ObjectHideFlags: 0

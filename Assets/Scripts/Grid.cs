@@ -34,6 +34,7 @@ public class Grid : MonoBehaviour
     private GameObjectNodes[] physicalGrid;
     public List<Node> path;
     public HashSet<Node> searchedSet;
+
     
     private float nodeDiameter;
     private int gridSizeX;
@@ -140,7 +141,7 @@ public class Grid : MonoBehaviour
                                  Vector3.forward * (y * nodeDiameter + nodeRadius);
                     bool walkable = !(Physics.CheckSphere(worldPoint, nodeRadius, unwalkableMask));
                     bool obstacle = Physics.CheckSphere(worldPoint, nodeRadius, obstacleMask);
-
+                    
                     grid[x,y].walkable = walkable;
                     grid[x,y].obstacle = obstacle;
                 }
